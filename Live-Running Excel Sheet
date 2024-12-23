@@ -1,0 +1,27 @@
+def update_excel(df, filename="crypto_data.xlsx"):
+    """Write data to Excel and keep updating it every 5 minutes."""
+    try:
+        # Check if the file already exists
+        book = load_workbook(filename)
+        writer = pd.ExcelWriter(filename, engine="openpyxl")
+        writer.book = book
+    except FileNotFoundError:
+        # Create a new file if it doesn't exist
+        writer = pd.ExcelWriter(filename, engine="openpyxl")
+    
+    # Write the data to the "Live Data" sheet
+    df.to_excel(writer, index=False, sheet_name="Live Data")
+    writer.save()
+    writer.close()
+
+def live_update():
+    """Continuously fetch, analyze, and update Excel every 5 minutes."""
+    while True:
+        crypto_data = fetch_crypto_data()
+        crypto_df = parse_crypto_data(crypto_data)
+        update_excel(crypto_df)
+        print("Updated Excel with latest data!")
+        time.sleep(300)  # Wait for 5 minutes
+
+# Start live updates
+live_update()
