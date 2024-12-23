@@ -1,0 +1,24 @@
+def analyze_crypto_data(df):
+    """Perform analysis on the cryptocurrency data."""
+    # Top 5 by market capitalization
+    top_5_by_market_cap = df.nlargest(5, "Market Capitalization")
+    
+    # Average price of the top 50 cryptocurrencies
+    average_price = df["Current Price (USD)"].mean()
+    
+    # Highest and lowest 24-hour percentage price change
+    highest_change = df["24h Price Change (%)"].max()
+    lowest_change = df["24h Price Change (%)"].min()
+    
+    # Print analysis results
+    print("\nAnalysis Results:")
+    print("Top 5 Cryptocurrencies by Market Cap:")
+    print(top_5_by_market_cap)
+    print(f"\nAverage Price of Top 50 Cryptocurrencies: ${average_price:.2f}")
+    print(f"\nHighest 24h Price Change (%): {highest_change:.2f}")
+    print(f"Lowest 24h Price Change (%): {lowest_change:.2f}")
+    
+    return top_5_by_market_cap, average_price, highest_change, lowest_change
+
+# Perform analysis
+analyze_crypto_data(crypto_df)
