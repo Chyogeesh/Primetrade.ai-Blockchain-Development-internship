@@ -1,0 +1,39 @@
+import requests
+import pandas as pd
+from openpyxl import Workbook, load_workbook
+import time
+
+# Constants
+API_URL = "https://api.coingecko.com/api/v3/coins/markets"
+PARAMS = {
+    "vs_currency": "usd",
+    "order": "market_cap_desc",
+    "per_page": 50,
+    "page": 1,
+    "sparkline": False,
+}
+
+def fetch_crypto_data():
+    """Fetch live cryptocurrency data for the top 50 cryptocurrencies."""
+    response = requests.get(API_URL, params=PARAMS)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    return response.json()
+
+def parse_crypto_data(data):
+    """Parse relevant fields from API response into a pandas DataFrame."""
+    crypto_list = []
+    for coin in data:
+        crypto_list.append({
+            "Name": coin["name"],
+            "Symbol": coin["symbol"],
+            "Current Price (USD)": coin["current_price"],
+            "Market Capitalization": coin["market_cap"],
+            "24h Trading Volume": coin["total_volume"],
+            "24h Price Change (%)": coin["price_change_percentage_24h"],
+        })
+    return pd.DataFrame(crypto_list)
+
+# Fetch and parse data
+crypto_data = fetch_crypto_data()
+crypto_df = parse_crypto_data(crypto_data)
+print(crypto_df.head())  # Display the top 5 rows for verification
